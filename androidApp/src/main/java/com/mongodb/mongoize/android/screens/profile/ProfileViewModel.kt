@@ -21,4 +21,10 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
+    fun save(name: String, orgName: String, phoneNumber: String) {
+        viewModelScope.launch {
+            repo.saveUserInfo(name,orgName,phoneNumber)
+        }
+    }
+
 }

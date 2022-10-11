@@ -3,7 +3,11 @@ package com.mongodb.mongoize
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.log.LogLevel
-import io.realm.kotlin.mongodb.*
+import io.realm.kotlin.mongodb.App
+import io.realm.kotlin.mongodb.AppConfiguration
+import io.realm.kotlin.mongodb.Credentials
+import io.realm.kotlin.mongodb.User
+import io.realm.kotlin.mongodb.subscriptions
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -48,9 +52,13 @@ class RealmRepo {
     fun getUserProfile(): Flow<UserInfo?> {
 
         println("State: ${realm.subscriptions.state}")
-        println("State: ${realm.subscriptions.forEach {
-            println("State Query: ${it.name} --- ${it.queryDescription} -- ${it.objectType}")    
-        }}")
+        println(
+            "State: ${
+                realm.subscriptions.forEach {
+                    println("State Query: ${it.name} --- ${it.queryDescription} -- ${it.objectType}")
+                }
+            }"
+        )
 
 
         println("getUserProfile called")
@@ -74,16 +82,20 @@ class RealmRepo {
         return flowOf(appService.currentUser != null)
     }
 
-    fun saveUserInfo() {
+    suspend fun saveUserInfo(name: String, orgName: String, phoneNumber: String) {
         if (appService.currentUser != null) {
-            val user = UserInfo().apply {
-                _id = appService.currentUser!!.id
-                email = "ex.com"
-            }
 
-            realm.writeBlocking {
-                println("getUserProfile writeBlocking");
-                copyToRealm(user)
+            val userId = appService.currentUser!!.id
+            realm.write {
+                var user = query<UserInfo>("_id = $0", userId).first().find()
+                if (user != null) {
+                    user = findLatest(user)!!.also {
+                        it.name = name
+                        it.orgName = orgName
+                        it.phoneNumber = phoneNumber.toLongOrNull()
+                    }
+                    copyToRealm(user)
+                }
             }
         }
     }
