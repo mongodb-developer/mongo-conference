@@ -19,6 +19,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -26,11 +28,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mongodb.mongoize.android.MyApplicationTheme
 import com.mongodb.mongoize.android.R
 
 class Registration : ComponentActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,21 @@ class Registration : ComponentActivity() {
     @Preview(showBackground = true)
     @Composable
     fun Container() {
+
+        val viewModel: RegistrationViewModel = viewModel()
+        val nameState = remember { mutableStateOf("") }
+        val emailState = remember { mutableStateOf("") }
+        val passwordState = remember { mutableStateOf("") }
+
+
+        viewModel.registrationSuccess.observe(this) {
+            if (it){
+                onBackPressed()
+            }
+
+
+        }
+
         MyApplicationTheme {
             Surface(modifier = Modifier.fillMaxSize()) {
 
@@ -64,8 +81,10 @@ class Registration : ComponentActivity() {
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = {},
+                        value = nameState.value,
+                        onValueChange = {
+                            nameState.value = it
+                        },
                         label = { Text(text = "Name") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -73,8 +92,10 @@ class Registration : ComponentActivity() {
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = {},
+                        value = emailState.value,
+                        onValueChange = {
+                            emailState.value = it
+                        },
                         label = { Text(text = "Email") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -82,8 +103,10 @@ class Registration : ComponentActivity() {
                     )
 
                     TextField(
-                        value = "",
-                        onValueChange = {},
+                        value = passwordState.value,
+                        onValueChange = {
+                            passwordState.value = it
+                        },
                         label = { Text(text = "Password") },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -94,7 +117,13 @@ class Registration : ComponentActivity() {
                         modifier = Modifier
                             .padding(top = 48.dp)
                             .align(Alignment.CenterHorizontally),
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            viewModel.register(
+                                nameState.value,
+                                emailState.value,
+                                passwordState.value
+                            )
+                        }
                     ) {
                         Text(text = "Sign up")
                     }

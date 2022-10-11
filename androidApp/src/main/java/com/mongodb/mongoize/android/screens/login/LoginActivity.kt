@@ -2,6 +2,8 @@
 
 package com.mongodb.mongoize.android.screens.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mongodb.mongoize.android.MyApplicationTheme
 import com.mongodb.mongoize.android.R
+import com.mongodb.mongoize.android.screens.profile.ProfileScreen
+import com.mongodb.mongoize.android.screens.registration.Registration
 
 class LoginActivity : ComponentActivity() {
 
@@ -61,13 +66,19 @@ class LoginActivity : ComponentActivity() {
             val userName = remember { mutableStateOf("") }
             val password = remember { mutableStateOf("") }
             var showProgress by remember { mutableStateOf(false) }
-
+            val context = LocalContext.current
 
             val loginViewModel = viewModel<LoginViewModel>()
 
             loginViewModel.loginStatus.observeAsState(false).apply {
                 if (this.value) {
                     showProgress = false
+                    NavigateToHome()
+                }
+            }
+
+            loginViewModel.alreadyLoggedIn.observeAsState(false).apply {
+                if (this.value) {
                     NavigateToHome()
                 }
             }
@@ -90,7 +101,7 @@ class LoginActivity : ComponentActivity() {
                 onValueChange = {
                     userName.value = it
                 },
-                label = { Text(text = "Username") },
+                label = { Text(text = "Email") },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
@@ -118,7 +129,7 @@ class LoginActivity : ComponentActivity() {
 
 
             Text(text = "Sign up", modifier = Modifier.clickable {
-                navigateToRegistration()
+                navigateToRegistration(context)
             })
 
             if (showProgress) {
@@ -129,12 +140,12 @@ class LoginActivity : ComponentActivity() {
 
     @Composable
     fun NavigateToHome() {
-        /*val context = LocalContext.current
-        context.startActivity(Intent(context, HomeScreen::class.java))*/
+        val context = LocalContext.current
+        context.startActivity(Intent(context, ProfileScreen::class.java))
     }
 
-    private fun navigateToRegistration() {
-        TODO()
+    private fun navigateToRegistration(context: Context) {
+        context.startActivity(Intent(context, Registration::class.java))
     }
 
 }

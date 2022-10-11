@@ -2,5 +2,6 @@
 <resources>
 
     <string name="reg_name">Name</string>
+    <string name="app_name">Conference Manager</string>
 
 </resources>
