@@ -3,5 +3,7 @@
 
     <string name="reg_name">Name</string>
     <string name="app_name">Conference Manager</string>
+    <string name="profile_logout">Logout</string>
+
 
 </resources>

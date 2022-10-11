@@ -88,5 +88,9 @@ class RealmRepo {
         }
     }
 
+    suspend fun doLogout() {
+        appService.currentUser?.logOut()
+    }
+
 
 }
