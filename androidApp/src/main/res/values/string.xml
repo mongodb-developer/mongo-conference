@@ -7,5 +7,7 @@
     <string name="profile_save">Save</string>
     <string name="profile_logout">Logout</string>
 
+    <string name="conference_activity">Conference Details</string>
+    <string name="conference_save">Save</string>
 
 </resources>

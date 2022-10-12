@@ -34,6 +34,7 @@ kotlin {
                 }
                 implementation("io.realm.kotlin:library-sync:1.2.0")
                 implementation("io.github.aakira:napier:2.6.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
 
         }

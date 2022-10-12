@@ -9,9 +9,13 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.User
 import io.realm.kotlin.mongodb.subscriptions
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
+import io.realm.kotlin.types.RealmInstant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Instant
 
 class RealmRepo {
 
@@ -83,18 +87,19 @@ class RealmRepo {
     }
 
     suspend fun saveUserInfo(name: String, orgName: String, phoneNumber: String) {
-        if (appService.currentUser != null) {
-
-            val userId = appService.currentUser!!.id
-            realm.write {
-                var user = query<UserInfo>("_id = $0", userId).first().find()
-                if (user != null) {
-                    user = findLatest(user)!!.also {
-                        it.name = name
-                        it.orgName = orgName
-                        it.phoneNumber = phoneNumber.toLongOrNull()
+        withContext(Dispatchers.Default) {
+            if (appService.currentUser != null) {
+                val userId = appService.currentUser!!.id
+                realm.write {
+                    var user = query<UserInfo>("_id = $0", userId).first().find()
+                    if (user != null) {
+                        user = findLatest(user)!!.also {
+                            it.name = name
+                            it.orgName = orgName
+                            it.phoneNumber = phoneNumber.toLongOrNull()
+                        }
+                        copyToRealm(user)
                     }
-                    copyToRealm(user)
                 }
             }
         }
@@ -102,6 +107,26 @@ class RealmRepo {
 
     suspend fun doLogout() {
         appService.currentUser?.logOut()
+    }
+
+    suspend fun addConference(name: String, location: String, startDate: String, endDate: String) {
+        withContext(Dispatchers.Default) {
+            realm.write {
+                val conferenceInfo = ConferenceInfo().apply {
+                    this.name = name
+                    this.location = location
+                    this.startDate = startDate.run {
+                        val timestamp = Instant.parse(this + "T08:00:00Z").epochSeconds
+                        RealmInstant.from(timestamp, 0)
+                    }
+                    this.endDate = endDate.run {
+                        val timestamp = Instant.parse(this + "T17:00:00Z").epochSeconds
+                        RealmInstant.from(timestamp, 0)
+                    }
+                }
+                copyToRealm(conferenceInfo)
+            }
+        }
     }
 
 
