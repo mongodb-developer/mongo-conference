@@ -1,5 +1,7 @@
 package com.mongodb.mongoize
 
+import CommonFlow
+import asCommonFlow
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.log.LogLevel
@@ -129,5 +131,12 @@ class RealmRepo {
         }
     }
 
+    suspend fun getEventLists(): CommonFlow<List<ConferenceInfo>> {
+        return withContext(Dispatchers.Default) {
+            realm.query<ConferenceInfo>().asFlow().map {
+                it.list.map { it }
+            }.asCommonFlow()
+        }
+    }
 
 }

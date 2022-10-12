@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".screens.conference.AddConferenceActivity"
+            android:name=".screens.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,7 @@
         <activity android:name=".screens.registration.Registration" />
         <activity android:name=".screens.profile.ProfileScreen" />
         <activity android:name=".screens.home.HomeScreen" />
+        <activity android:name=".screens.conference.AddConferenceActivity" />
 
     </application>
 </manifest> 

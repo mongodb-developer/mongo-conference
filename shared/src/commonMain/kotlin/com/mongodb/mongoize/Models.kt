@@ -4,6 +4,9 @@ import io.realm.kotlin.types.RealmInstant
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.RealmUUID
 import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 
 class UserInfo : RealmObject {
@@ -37,7 +40,18 @@ class ConferenceInfo : RealmObject {
     var startDate: RealmInstant = RealmInstant.MIN
     var endDate: RealmInstant = RealmInstant.MIN
     var location: String = ""
+
+
+    val startDateAsString: String
+        get() {
+            return Instant.fromEpochMilliseconds(startDate.epochSeconds)
+                .toLocalDateTime(TimeZone.UTC)
+                .toString()
+        }
 }
+
+
+
 
 
 

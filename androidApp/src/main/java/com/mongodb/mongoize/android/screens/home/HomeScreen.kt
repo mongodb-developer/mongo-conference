@@ -3,12 +3,12 @@
 package com.mongodb.mongoize.android.screens.home
 
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,14 +27,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mongodb.mongoize.ConferenceInfo
 import com.mongodb.mongoize.android.R
+import com.mongodb.mongoize.android.screens.conference.AddConferenceActivity
 
 class HomeScreen : ComponentActivity() {
 
@@ -49,6 +55,8 @@ class HomeScreen : ComponentActivity() {
     @Preview
     @Composable
     fun Container() {
+        val context = LocalContext.current
+
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(
@@ -67,46 +75,44 @@ class HomeScreen : ComponentActivity() {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {}) {
+                FloatingActionButton(onClick = {
+                    startActivity(Intent(context, AddConferenceActivity::class.java))
+                }) {
                     Icon(Icons.Filled.Add, "")
                 }
             },
             floatingActionButtonPosition = FabPosition.End
         ) {
-            ConferenceList(it)
+            ConferenceList(it.calculateTopPadding())
         }
     }
 
     @Composable
-    fun ConferenceList(paddingValues: PaddingValues) {
+    fun ConferenceList(topPaddingValue: Dp) {
+
+        val homeVM = viewModel<HomeViewModel>()
+        val events = homeVM.events.observeAsState(emptyList()).value
+
         LazyColumn(
-            contentPadding = paddingValues,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = topPaddingValue, start = 8.dp, end = 8.dp),
             verticalArrangement = Arrangement.SpaceAround
 
         ) {
-            items(count = 100) {
-                SessionItem()
+            items(count = events.size) {
+                EventItem(events[it])
             }
         }
     }
 
-    @Preview
     @Composable
-    fun SessionItem() {
+    fun EventItem(conferenceInfo: ConferenceInfo) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
 
-            Text(text = "My Talk title", maxLines = 2, overflow = TextOverflow.Ellipsis)
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
-                text = "This talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\nThis talk is all about nothings\n"
-            )
+            Text(text = conferenceInfo.name, maxLines = 2, overflow = TextOverflow.Ellipsis)
 
             Row(
                 modifier = Modifier
@@ -115,8 +121,8 @@ class HomeScreen : ComponentActivity() {
                     .padding(top = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "By speakerName")
-                Text(text = "Duration 180 mins")
+                Text(text = conferenceInfo.location)
+                Text(text = conferenceInfo.startDateAsString)
             }
 
             Divider(
