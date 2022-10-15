@@ -150,9 +150,22 @@ class HomeScreen : ComponentActivity() {
                 verticalAlignment = CenterVertically
 
             ) {
-                Text(text = conferenceInfo.location)
-                Text(text = conferenceInfo.startDateAsString)
-            }
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        text = "${conferenceInfo.name}, ${conferenceInfo.location}",
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        text = conferenceInfo.startDate,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
 
             Divider(
                 thickness = DividerDefaults.Thickness,
