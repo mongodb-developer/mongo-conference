@@ -11,13 +11,11 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.User
 import io.realm.kotlin.mongodb.subscriptions
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
-import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 
 class RealmRepo {
 
@@ -25,7 +23,7 @@ class RealmRepo {
 
     private val appService by lazy {
         val appConfiguration = AppConfiguration
-            .Builder(appId = "application-0-uxqmn")
+            .Builder(appId = "rconfmanager-tcxmm")
             .log(LogLevel.ALL)
             .build()
         App.create(appConfiguration)
@@ -115,16 +113,11 @@ class RealmRepo {
         withContext(Dispatchers.Default) {
             realm.write {
                 val conferenceInfo = ConferenceInfo().apply {
+                    this._id = RandomUUID().randomId
                     this.name = name
                     this.location = location
-                    this.startDate = startDate.run {
-                        val timestamp = Instant.parse(this + "T08:00:00Z").epochSeconds
-                        RealmInstant.from(timestamp, 0)
-                    }
-                    this.endDate = endDate.run {
-                        val timestamp = Instant.parse(this + "T17:00:00Z").epochSeconds
-                        RealmInstant.from(timestamp, 0)
-                    }
+                    this.startDate = startDate
+                    this.endDate = endDate
                 }
                 copyToRealm(conferenceInfo)
             }
@@ -134,9 +127,16 @@ class RealmRepo {
     suspend fun getEventLists(): CommonFlow<List<ConferenceInfo>> {
         return withContext(Dispatchers.Default) {
             realm.query<ConferenceInfo>().asFlow().map {
-                it.list.map { it }
-            }.asCommonFlow()
-        }
+                it.list.forEach { conferenceInfo ->
+                    val talkCount =
+                        realm.query<SessionInfo>("conferenceInfo = $0", conferenceInfo._id).count()
+                            .find()
+                    conferenceInfo.apply {
+                        submissionCount = talkCount
+                    }
+                }
+                it.list
+            }
+        }.asCommonFlow()
     }
-
 }
