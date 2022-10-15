@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.mongodb.mongoize.android.screens.conference
+package com.mongodb.mongoize.android.screens.addconference
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -67,7 +67,7 @@ class AddConferenceActivity : ComponentActivity() {
     @Composable
     fun ContentView(topPadding: Dp) {
 
-        val vm = viewModel<ConferenceViewModel>()
+        val vm = viewModel<AddConferenceViewModel>()
 
         val name = remember { mutableStateOf("") }
         val location = remember { mutableStateOf<String>("") }
@@ -110,6 +110,7 @@ class AddConferenceActivity : ComponentActivity() {
                     },
                     onClick = {
                         vm.addConference(name.value, location.value, startDate.value, endDate.value)
+                        finish()
                     })
             }
         }
