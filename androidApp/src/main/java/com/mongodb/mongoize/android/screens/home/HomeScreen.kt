@@ -167,14 +167,23 @@ class HomeScreen : ComponentActivity() {
                     )
                 }
 
-            Divider(
-                thickness = DividerDefaults.Thickness,
-                modifier = Modifier.padding(
-                    horizontal = 4.dp,
-                    vertical = 2.dp
-                )
-            )
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(4.dp),
+                    elevation = CardDefaults.outlinedCardElevation(),
+                    border = BorderStroke(1.dp, Color.Black)
+                ) {
+                    Text(
+                        text = "",
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .padding(horizontal = 8.dp)
 
+                    )
+                }
+            }
         }
     }
 }
