@@ -21,7 +21,7 @@
         <activity android:name=".screens.registration.Registration" />
         <activity android:name=".screens.profile.ProfileScreen" />
         <activity android:name=".screens.home.HomeScreen" />
-        <activity android:name=".screens.conference.AddConferenceActivity" />
+        <activity android:name=".screens.addconference.AddConferenceActivity" />
 
     </application>
 </manifest> 
