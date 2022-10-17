@@ -51,7 +51,6 @@ class ConferenceDetailView : ComponentActivity() {
     fun TopBar() {
         val name = intent.getStringExtra("name") ?: return
         val confId = intent.getStringExtra("id") ?: return
-        val location = intent.getStringExtra("location") ?: return
 
         val vm = viewModel<ConferenceDetailViewModel>()
         vm.updateConferenceId(confId)
