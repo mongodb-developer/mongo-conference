@@ -24,7 +24,7 @@ class RealmRepo {
 
     private val appService by lazy {
         val appConfiguration = AppConfiguration
-            .Builder(appId = "rconfmanager-tcxmm")
+            .Builder(appId = "rconfernce-vkrny")
             .log(LogLevel.ALL)
             .build()
         App.create(appConfiguration)
@@ -134,7 +134,8 @@ class RealmRepo {
 
     suspend fun getTalks(conferenceId: ObjectId): CommonFlow<List<SessionInfo>> {
         return withContext(Dispatchers.Default) {
-            realm.query<SessionInfo>("conferenceId = $0", conferenceId).asFlow().map {
+            realm.query<SessionInfo>("conferenceId = $0 && isAccepted != true", conferenceId)
+                .asFlow().map {
                 it.list
             }.asCommonFlow()
         }
@@ -149,18 +150,18 @@ class RealmRepo {
         }
     }
 
-    suspend fun updateTalkState(talk: SessionInfo) {
+    suspend fun updateTalkState(sessionId: ObjectId, state: Boolean) {
         return withContext(Dispatchers.Default) {
-
-            realm.write {
-                val currentState = this.findLatest(talk)
-                if (currentState != null) {
-                    currentState.apply {
-                        currentState.isAccepted = talk.isAccepted
+            val session = realm.query<SessionInfo>("_id = $0", sessionId).first().find()
+            if (session != null) {
+                realm.write {
+                    (findLatest(session) as SessionInfo).run {
+                        this.isAccepted = state
+                        copyToRealm(this)
                     }
-                    copyToRealm(currentState)
                 }
             }
+
         }
     }
 

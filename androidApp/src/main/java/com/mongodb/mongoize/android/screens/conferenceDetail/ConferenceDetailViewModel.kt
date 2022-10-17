@@ -2,6 +2,7 @@ package com.mongodb.mongoize.android.screens.conferenceDetail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.mongodb.mongoize.RealmRepo
@@ -20,16 +21,16 @@ class ConferenceDetailViewModel() : ViewModel() {
     }
 
     val talks: LiveData<List<SessionInfo>> = liveData {
-        repo.getTalks(conferenceId)
+        emitSource(repo.getTalks(conferenceId).asLiveData(Dispatchers.IO))
     }
 
     val selectedTalks: LiveData<List<SessionInfo>> = liveData {
-        repo.getTalks(conferenceId)
+        emitSource(repo.getSelectedTalks(conferenceId).asLiveData(Dispatchers.IO))
     }
 
-    fun updateTalkStatus(talk: SessionInfo) {
+    fun updateTalkStatus(talkId: ObjectId, state: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            repo.updateTalkState(talk)
+            repo.updateTalkState(talkId, state)
         }
     }
 }

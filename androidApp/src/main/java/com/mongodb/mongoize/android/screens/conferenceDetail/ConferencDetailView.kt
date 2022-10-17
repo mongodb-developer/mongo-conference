@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mongodb.mongoize.SessionInfo
 import com.mongodb.mongoize.android.MyApplicationTheme
+import io.realm.kotlin.types.ObjectId
 
 @ExperimentalMaterial3Api
 class ConferenceDetailView : ComponentActivity() {
@@ -67,8 +68,8 @@ class ConferenceDetailView : ComponentActivity() {
     fun Container(topPadding: Dp, vm: ConferenceDetailViewModel) {
         val allTalks = vm.talks.observeAsState(emptyList())
         val selectedTalks = vm.selectedTalks.observeAsState(emptyList())
-        val onTalkStateChange = { talkWithUpdatedState: SessionInfo ->
-            vm.updateTalkStatus(talkWithUpdatedState)
+        val onTalkStateChange = { talkId: ObjectId, state: Boolean ->
+            vm.updateTalkStatus(talkId = talkId, state = state)
         }
 
 
@@ -97,7 +98,7 @@ class ConferenceDetailView : ComponentActivity() {
     }
 
     @Composable
-    fun TalkView(talk: SessionInfo, onTalkStateChange: (SessionInfo) -> Unit) {
+    fun TalkView(talk: SessionInfo, onTalkStateChange: (ObjectId, Boolean) -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -118,9 +119,8 @@ class ConferenceDetailView : ComponentActivity() {
                 Text(text = "${talk.duration} mins", modifier = Modifier.fillMaxWidth())
             }
 
-            Switch(checked = talk.isAccepted ?: false, onCheckedChange = {
-                talk.isAccepted = it
-                onTalkStateChange(talk)
+            Switch(checked = talk.isAccepted, onCheckedChange = {
+                onTalkStateChange(talk._id, it)
             })
         }
     }

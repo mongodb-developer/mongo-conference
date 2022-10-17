@@ -24,7 +24,7 @@ class SessionInfo : RealmObject {
     var talkTitle: String = ""
     var abstract: String = ""
     var duration: Int = 0
-    var isAccepted: Boolean? = null
+    var isAccepted: Boolean = false
     var conferenceId: ObjectId = ObjectId.create()
 }
 
