@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,6 +51,7 @@ import com.mongodb.mongoize.ConferenceInfo
 import com.mongodb.mongoize.android.R
 import com.mongodb.mongoize.android.screens.addconference.AddConferenceActivity
 import com.mongodb.mongoize.android.screens.conferenceDetail.ConferenceDetailView
+import com.mongodb.mongoize.android.screens.profile.ProfileScreen
 import io.realm.kotlin.types.ObjectId
 
 class HomeScreen : ComponentActivity() {
@@ -73,10 +77,31 @@ class HomeScreen : ComponentActivity() {
                         fontSize = 24.sp,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
-                }, colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color(0xFF3700B3), titleContentColor = Color.White
-                )
-
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color(0xFF3700B3),
+                    titleContentColor = Color.White
+                ),
+                actions = {
+                    IconButton(onClick = {
+                        startActivity(Intent(context, ProfileScreen::class.java))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Rounded.AccountCircle,
+                            contentDescription = "Localized description",
+                            tint = Color.White
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { /* doSomething() */ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Localized description",
+                            tint = Color.White
+                        )
+                    }
+                },
             )
         }, floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -148,7 +173,6 @@ class HomeScreen : ComponentActivity() {
                 },
             shape = RoundedCornerShape(4.dp),
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-
         ) {
 
             Row(
