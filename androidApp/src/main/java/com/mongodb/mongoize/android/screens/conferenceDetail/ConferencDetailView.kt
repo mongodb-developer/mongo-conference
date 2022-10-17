@@ -79,7 +79,7 @@ class ConferenceDetailView : ComponentActivity() {
             }
 
             items(count = selectedTalks.value.size) {
-                TalkView(talk = allTalks.value[it], onTalkStateChange)
+                TalkView(talk = selectedTalks.value[it], onTalkStateChange)
             }
 
             item {
