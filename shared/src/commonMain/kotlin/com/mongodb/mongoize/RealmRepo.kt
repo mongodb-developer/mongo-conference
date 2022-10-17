@@ -11,6 +11,7 @@ import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.User
 import io.realm.kotlin.mongodb.subscriptions
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
+import io.realm.kotlin.types.ObjectId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -113,7 +114,6 @@ class RealmRepo {
         withContext(Dispatchers.Default) {
             realm.write {
                 val conferenceInfo = ConferenceInfo().apply {
-                    this._id = RandomUUID().randomId
                     this.name = name
                     this.location = location
                     this.startDate = startDate
@@ -127,16 +127,41 @@ class RealmRepo {
     suspend fun getEventLists(): CommonFlow<List<ConferenceInfo>> {
         return withContext(Dispatchers.Default) {
             realm.query<ConferenceInfo>().asFlow().map {
-                it.list.forEach { conferenceInfo ->
-                    val talkCount =
-                        realm.query<SessionInfo>("conferenceInfo = $0", conferenceInfo._id).count()
-                            .find()
-                    conferenceInfo.apply {
-                        submissionCount = talkCount
-                    }
-                }
                 it.list
             }
         }.asCommonFlow()
     }
+
+    suspend fun getTalks(conferenceId: ObjectId): CommonFlow<List<SessionInfo>> {
+        return withContext(Dispatchers.Default) {
+            realm.query<SessionInfo>("conferenceId = $0", conferenceId).asFlow().map {
+                it.list
+            }.asCommonFlow()
+        }
+    }
+
+    suspend fun getSelectedTalks(conferenceId: ObjectId): CommonFlow<List<SessionInfo>> {
+        return withContext(Dispatchers.Default) {
+            realm.query<SessionInfo>("conferenceId = $0 && isAccepted = true", conferenceId)
+                .asFlow().map {
+                    it.list
+                }.asCommonFlow()
+        }
+    }
+
+    suspend fun updateTalkState(talk: SessionInfo) {
+        return withContext(Dispatchers.Default) {
+
+            realm.write {
+                val currentState = this.findLatest(talk)
+                if (currentState != null) {
+                    currentState.apply {
+                        currentState.isAccepted = talk.isAccepted
+                    }
+                    copyToRealm(currentState)
+                }
+            }
+        }
+    }
+
 }

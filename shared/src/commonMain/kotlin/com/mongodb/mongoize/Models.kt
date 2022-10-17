@@ -24,20 +24,18 @@ class SessionInfo : RealmObject {
     var talkTitle: String = ""
     var abstract: String = ""
     var duration: Int = 0
-    var startsAt: String? = null
-    var speaker: UserInfo? = null
-    var conferenceInfo: String? = null
+    var isAccepted: Boolean? = null
+    var conferenceId: ObjectId = ObjectId.create()
 }
 
 class ConferenceInfo : RealmObject {
 
     @PrimaryKey
-    var _id: String = ""
+    var _id: ObjectId = ObjectId.create()
     var name: String = ""
     var startDate: String = ""
     var endDate: String = ""
     var location: String = ""
-
     @Ignore
     var submissionCount: Long = 0L
 }

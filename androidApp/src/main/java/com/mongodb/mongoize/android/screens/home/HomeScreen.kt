@@ -3,15 +3,15 @@
 package com.mongodb.mongoize.android.screens.home
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -47,6 +47,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mongodb.mongoize.ConferenceInfo
 import com.mongodb.mongoize.android.R
 import com.mongodb.mongoize.android.screens.addconference.AddConferenceActivity
+import com.mongodb.mongoize.android.screens.conferenceDetail.ConferenceDetailView
+import io.realm.kotlin.types.ObjectId
 
 class HomeScreen : ComponentActivity() {
 
@@ -131,11 +133,19 @@ class HomeScreen : ComponentActivity() {
 
     @Composable
     fun EventItem(conferenceInfo: ConferenceInfo) {
+        val context = LocalContext.current
 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(6.dp),
+                .padding(6.dp)
+                .clickable {
+                    goToConferenceDetails(
+                        context = context,
+                        conferenceName = conferenceInfo.name,
+                        conferenceId = conferenceInfo._id
+                    )
+                },
             shape = RoundedCornerShape(4.dp),
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
 
@@ -167,23 +177,36 @@ class HomeScreen : ComponentActivity() {
                     )
                 }
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    elevation = CardDefaults.outlinedCardElevation(),
-                    border = BorderStroke(1.dp, Color.Black)
-                ) {
-                    Text(
-                        text = "",
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .padding(horizontal = 8.dp)
+                /*   Card(
+                       modifier = Modifier
+                           .fillMaxHeight()
+                           .padding(8.dp),
+                       shape = RoundedCornerShape(4.dp),
+                       elevation = CardDefaults.outlinedCardElevation(),
+                       border = BorderStroke(1.dp, Color.Black)
+                   ) {
+                       Text(
+                           text = "",
+                           modifier = Modifier
+                               .padding(4.dp)
+                               .padding(horizontal = 8.dp)
 
-                    )
-                }
+                       )
+                   }*/
             }
         }
     }
+
+
+    private fun goToConferenceDetails(
+        context: Context,
+        conferenceId: ObjectId,
+        conferenceName: String
+    ) {
+        val intent = Intent(context, ConferenceDetailView::class.java)
+        intent.putExtra("name", conferenceName)
+        intent.putExtra("id", conferenceId.toString())
+        context.startActivity(intent)
+    }
+
 }
