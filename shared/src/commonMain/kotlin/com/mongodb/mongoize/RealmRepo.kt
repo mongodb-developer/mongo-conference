@@ -23,26 +23,25 @@ class RealmRepo {
     private val schemaClass = setOf(UserInfo::class, SessionInfo::class, ConferenceInfo::class)
 
     private val appService by lazy {
-        val appConfiguration = AppConfiguration
-            .Builder(appId = "rconfernce-vkrny")
-            .log(LogLevel.ALL)
-            .build()
+        val appConfiguration =
+            AppConfiguration.Builder(appId = "rconfernce-vkrny").log(LogLevel.ALL).build()
         App.create(appConfiguration)
     }
 
     private val realm by lazy {
         val user = appService.currentUser!!
 
-        val config = SyncConfiguration.Builder(user, schemaClass)
-            .name("conferenceInfo")
-            .schemaVersion(1)
-            .initialSubscriptions { realm ->
-                add(realm.query<UserInfo>(), name = "user info", updateExisting = true)
-                add(realm.query<SessionInfo>(), name = "session info", updateExisting = true)
-                add(realm.query<ConferenceInfo>(), name = "conference info", updateExisting = true)
-            }
-            .waitForInitialRemoteData()
-            .build()
+        val config =
+            SyncConfiguration.Builder(user, schemaClass).name("conferenceInfo").schemaVersion(1)
+                .initialSubscriptions { realm ->
+                    add(realm.query<UserInfo>(), name = "user info", updateExisting = true)
+                    add(realm.query<SessionInfo>(), name = "session info", updateExisting = true)
+                    add(
+                        realm.query<ConferenceInfo>(),
+                        name = "conference info",
+                        updateExisting = true
+                    )
+                }.waitForInitialRemoteData().build()
         Realm.open(config)
     }
 
@@ -57,13 +56,11 @@ class RealmRepo {
     fun getUserProfile(): Flow<UserInfo?> {
 
         println("State: ${realm.subscriptions.state}")
-        println(
-            "State: ${
-                realm.subscriptions.forEach {
-                    println("State Query: ${it.name} --- ${it.queryDescription} -- ${it.objectType}")
-                }
-            }"
-        )
+        println("State: ${
+            realm.subscriptions.forEach {
+                println("State Query: ${it.name} --- ${it.queryDescription} -- ${it.objectType}")
+            }
+        }")
 
 
         println("getUserProfile called")
@@ -136,8 +133,8 @@ class RealmRepo {
         return withContext(Dispatchers.Default) {
             realm.query<SessionInfo>("conferenceId = $0 && isAccepted != true", conferenceId)
                 .asFlow().map {
-                it.list
-            }.asCommonFlow()
+                    it.list
+                }.asCommonFlow()
         }
     }
 
