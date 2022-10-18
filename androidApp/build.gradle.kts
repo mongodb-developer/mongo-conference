@@ -20,7 +20,7 @@ android {
 
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.0"
+        kotlinCompilerExtensionVersion = "1.3.2"
     }
 
     packagingOptions {
@@ -48,11 +48,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
     implementation("androidx.compose.runtime:runtime-livedata:1.2.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt") {
-        version {
-            strictly("1.6.0-native-mt")
-        }
-    }
-    compileOnly("io.realm.kotlin:library-sync:1.2.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    compileOnly("io.realm.kotlin:library-sync:1.4.0")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
 }

@@ -38,6 +38,9 @@ class ConferenceInfo : RealmObject {
     var location: String = ""
     @Ignore
     var submissionCount: Long = 0L
+
+    @Ignore
+    var id: String = _id.toString()
 }
 
 

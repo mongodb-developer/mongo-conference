@@ -27,12 +27,8 @@ kotlin {
         val commonMain by getting {
 
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt") {
-                    version {
-                        strictly("1.6.0-native-mt")
-                    }
-                }
-                implementation("io.realm.kotlin:library-sync:1.2.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("io.realm.kotlin:library-sync:1.4.0")
                 implementation("io.github.aakira:napier:2.6.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
