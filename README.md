@@ -4,8 +4,6 @@
 This is a very basic app which demostrate how to build conference manager app using Kotlin Multiplatform (KMM) with Flexiable Sync from Atlas Data Service as backend. 
 
 
-
-|---|---|
 | <img src="https://user-images.githubusercontent.com/1336626/196676038-969283f1-c0ab-45f2-8181-0f2e08c2d087.png"  width=25% height=25%> | <img src="https://user-images.githubusercontent.com/1336626/196676166-b60f9435-e2e6-4338-a231-2a911234cdd2.png"  width=25% height=25%>|
 
 
