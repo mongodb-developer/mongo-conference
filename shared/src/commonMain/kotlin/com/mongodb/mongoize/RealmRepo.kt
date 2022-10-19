@@ -49,8 +49,8 @@ class RealmRepo {
         return appService.login(Credentials.emailPassword(email, password))
     }
 
-    suspend fun registration(userName: String, password: String, email: String) {
-        appService.emailPasswordAuth.registerUser(email, password)
+    suspend fun registration(password: String, email: String) {
+        appService.emailPasswordAuth.registerUser(email = email, password =  password)
     }
 
     fun getUserProfile(): Flow<UserInfo?> {

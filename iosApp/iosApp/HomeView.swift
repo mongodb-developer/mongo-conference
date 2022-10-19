@@ -24,16 +24,13 @@ struct HomeView: View {
                         }
                     
                         Spacer()
-           
                 }
             }
-            
-            
         }
         .onAppear {
             getConferenceList()
         }
-        .navigationBarBackButtonHidden(false)
+        .navigationBarBackButtonHidden(true)
     }
 
 

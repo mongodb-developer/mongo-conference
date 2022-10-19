@@ -164,7 +164,7 @@ class AddConferenceActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
-            placeholder = { Text(text = "DD/MM/YYYY Format")}
+            placeholder = { Text(text = "DD-MM-YYYY Format")}
         )
     }
 
@@ -183,7 +183,7 @@ class AddConferenceActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
-            placeholder = { Text(text = "DD/MM/YYYY Format")}
+            placeholder = { Text(text = "DD-MM-YYYY Format")}
         )
     }
 

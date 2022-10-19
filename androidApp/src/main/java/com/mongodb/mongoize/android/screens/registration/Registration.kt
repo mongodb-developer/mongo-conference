@@ -3,6 +3,7 @@
 package com.mongodb.mongoize.android.screens.registration
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,17 +48,16 @@ class Registration : ComponentActivity() {
     fun Container() {
 
         val viewModel: RegistrationViewModel = viewModel()
-        val nameState = remember { mutableStateOf("") }
         val emailState = remember { mutableStateOf("") }
         val passwordState = remember { mutableStateOf("") }
 
+        val context = LocalContext.current
 
         viewModel.registrationSuccess.observe(this) {
-            if (it){
-                onBackPressed()
+            if (it) {
+                Toast.makeText(context, "Sign up successful. Login now", Toast.LENGTH_LONG).show()
+                finish()
             }
-
-
         }
 
         MyApplicationTheme {
@@ -81,17 +82,6 @@ class Registration : ComponentActivity() {
                     )
 
                     TextField(
-                        value = nameState.value,
-                        onValueChange = {
-                            nameState.value = it
-                        },
-                        label = { Text(text = "Name") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    )
-
-                    TextField(
                         value = emailState.value,
                         onValueChange = {
                             emailState.value = it
@@ -113,18 +103,13 @@ class Registration : ComponentActivity() {
                             .padding(vertical = 4.dp)
                     )
 
-                    Button(
-                        modifier = Modifier
-                            .padding(top = 48.dp)
-                            .align(Alignment.CenterHorizontally),
-                        onClick = {
-                            viewModel.register(
-                                nameState.value,
-                                emailState.value,
-                                passwordState.value
-                            )
-                        }
-                    ) {
+                    Button(modifier = Modifier
+                        .padding(top = 48.dp)
+                        .align(Alignment.CenterHorizontally), onClick = {
+                        viewModel.register(
+                            emailState.value, passwordState.value
+                        )
+                    }) {
                         Text(text = "Sign up")
                     }
                 }

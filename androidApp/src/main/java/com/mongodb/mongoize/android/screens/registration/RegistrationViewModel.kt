@@ -13,10 +13,10 @@ class RegistrationViewModel : ViewModel() {
     private val repo = RealmRepo()
     val registrationSuccess = MutableLiveData<Boolean>()
 
-    fun register(name: String, email: String, password: String) {
+    fun register(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repo.registration(userName = name, password = password, email = email).run {
+                repo.registration(password = password, email = email).run {
                     withContext(Dispatchers.Main) {
                         registrationSuccess.value = true
                     }
